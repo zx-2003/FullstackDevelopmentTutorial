@@ -1,0 +1,16 @@
+asgiref
+Django
+django-cors-headers
+djangorestframework
+djangorestframework-simplejwt
+PyJWT
+pytz
+sqlparse
+psycopg2-binary
+python-dotenv
+Pillow
+gunicorn
+whitenoise
+dj-database-url
+django-storages[google]
+google-cloud-storage
