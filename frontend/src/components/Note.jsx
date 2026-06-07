@@ -7,7 +7,7 @@ function Note({note, onDelete}) {
         <p className = "note-title">{note.title}</p>
         <p className = "note-content">{note.content}</p>
         <p className="note-date">{formattedDate}</p>
-        <img src={note.images} alt="Note Image" className="note-image" />
+        {note.images && <img src={note.images} alt="Note Image" className="note-image" />}
         <button onClick={() => onDelete(note.id)}>Delete</button>
     </div>
 }

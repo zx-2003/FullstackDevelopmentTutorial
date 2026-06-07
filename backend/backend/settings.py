@@ -151,7 +151,7 @@ if GS_BUCKET_NAME:
     MEDIA_URL = f'https://storage.googleapis.com/{GS_BUCKET_NAME}/'
     default_storage = {
         'BACKEND': 'storages.backends.gcloud.GoogleCloudStorage',
-        'OPTIONS': {'bucket_name': GS_BUCKET_NAME},
+        'OPTIONS': {'bucket_name': GS_BUCKET_NAME, 'querystring_auth': False},
     }
 else:
     MEDIA_URL = '/media/'
