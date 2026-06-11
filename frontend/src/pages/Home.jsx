@@ -9,16 +9,16 @@ function Home () {
     const [title, setTitle] = useState("");
     const [image, setImage] = useState(null);
 
-    useEffect(() => {
-        getNote()
-    }, [])
-
     const getNote = () => {
         api.get("api/notes/")
         .then((res) => res.data)
         .then((data) => { setNotes(data); console.log(data); })
         .catch((error) => console.error("Error fetching notes:", error));
     };
+
+    useEffect(() => {
+        getNote()
+    }, [])
 
     const deleteNote = (id) => {
         api.delete(`/api/notes/delete/${id}/`).then((res) => {

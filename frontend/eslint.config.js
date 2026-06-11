@@ -17,5 +17,10 @@ export default defineConfig([
       globals: globals.browser,
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
+    rules: {
+      // Conflicts with the standard "check status on mount, then setState"
+      // pattern used throughout this app (e.g. ProtectedRoute).
+      'react-hooks/set-state-in-effect': 'off',
+    },
   },
 ])
