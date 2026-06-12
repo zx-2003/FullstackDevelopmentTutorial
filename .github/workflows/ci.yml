@@ -1,10 +1,17 @@
 name: CI
 
 on:
+  # this will be done on push and on pull request.   
   push:
   pull_request:
     branches: ["main"]
 
+# name and uses are standard github actions workflow syntax keys used in a steps list. 
+# uses is used to specify an action to run, and name is used to give a name to the step for better readability in the workflow logs.
+# list of different actions used in this workflow:
+# - actions/checkout@v4: This action checks out the repository so that the workflow can access the codebase. It is essential for any workflow that needs to interact with the code in the repository.
+# - actions/setup-python@v5: This action sets up a Python environment for the workflow. It allows you to specify the version of Python you want to use and can also cache dependencies to speed up subsequent runs.
+# - actions/setup-node@v4: This action sets up a Node.js environment for the workflow. Similar to the Python setup action, it allows you to specify the version of Node.js and can cache dependencies for faster builds.  
 jobs:
   backend:
     name: Backend tests (Django)

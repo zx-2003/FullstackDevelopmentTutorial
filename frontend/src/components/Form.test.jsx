@@ -5,8 +5,10 @@ import Form from './Form'
 import api from '../api'
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '../constants'
 
+// vi.fn() is used to create a mock function that we can use to track calls and arguments, allowing us to assert that the onDelete function is called correctly when the delete button is clicked
 const mockNavigate = vi.fn()
 
+// vi.mock is used to mock the react-router-dom module, specifically the useNavigate hook, so that we can control its behavior in our tests and assert that it is called with the correct arguments when navigation occurs
 vi.mock('react-router-dom', async (importOriginal) => {
   const actual = await importOriginal()
   return {
@@ -52,6 +54,7 @@ describe('Form', () => {
 
   it('on successful login, stores tokens and navigates to "/"', async () => {
     const user = userEvent.setup()
+    // mockResolvedValueOnce is used to specify the resolved value for the next call to api.post, allowing us to simulate a successful login response with access and refresh tokens, which we can then assert are stored in localStorage and that navigation occurs as expected
     api.post.mockResolvedValueOnce({
       data: { access: 'fake-access-token', refresh: 'fake-refresh-token' },
     })

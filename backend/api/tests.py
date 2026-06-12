@@ -4,9 +4,13 @@ from rest_framework import status
 
 from .models import Note
 
+# the data in the tests are saved in a separate test database, so they won't affect the real data in the development or production database. This allows us to run tests without worrying about messing up our actual data.
+# the data is destroyed after the tests are done, so each test starts with a clean slate. This isolation is crucial for ensuring that tests are reliable and don't interfere with each other.
 
+# APITestCase is a class from Django REST Framework. It provides a test client that can make requests to the API endpoints and check the responses.
 class NoteModelTest(APITestCase):
     def setUp(self):
+        # self.user established here so the 3rd test in this class can access it.
         self.user = User.objects.create_user(username="modeluser", password="testpass123")
 
     def test_note_str_returns_title(self):
@@ -23,15 +27,20 @@ class NoteModelTest(APITestCase):
 
 
 class UserRegistrationTest(APITestCase):
+    # url so every other tests in the class can access it. 
     def setUp(self):
         self.register_url = "/api/user/register/"
 
     def test_register_user_success(self):
+        # payload is the data you are sending in the request body. 
         payload = {"username": "newuser", "password": "strongpassword123"}
+        # self.client is the test client provided by APITestCase.
+        # simulates HTTP request to API without needing a real running server. 
         response = self.client.post(self.register_url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertTrue(User.objects.filter(username="newuser").exists())
+        # this is just to make sure the password is not returned in the response from the backend. 
         self.assertNotIn("password", response.data)
 
     def test_register_duplicate_username_fails(self):
@@ -67,15 +76,19 @@ class AuthenticatedNoteAPITest(APITestCase):
     def _delete_url(self, pk):
         return f"/api/notes/delete/{pk}/"
 
+    # this sends a GET request to the notes endpoint without authentication. Supposed to return an error
     def test_list_notes_requires_authentication(self):
         response = self.client.get(self.notes_url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
+    # this sends a POST request to the notes endpoint without authentication. Supposed to return an error
+    # the first class was able to create a note because it was using the Note model directly, but this class is testing the API endpoints, so it has to go through the authentication process.
     def test_create_note_requires_authentication(self):
         response = self.client.post(self.notes_url, {"title": "T", "content": "C"})
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_authenticated_user_lists_only_own_notes(self):
+        # basically bypasses the jwt token authentication and directly sets the user for the test client. This allows us to simulate requests as if they were made by that user without needing to go through the login process and obtain a token.
         self.client.force_authenticate(user=self.user_a)
 
         response = self.client.get(self.notes_url)
@@ -98,6 +111,7 @@ class AuthenticatedNoteAPITest(APITestCase):
     def test_user_can_delete_own_note(self):
         self.client.force_authenticate(user=self.user_a)
 
+        # id is not specific to the Note model, it's a common field for all models in Django. When you create a new instance of a model, Django automatically assigns it a unique id. This id is used to identify the specific instance in the database and is often used in API endpoints to specify which resource you want to interact with (like deleting a specific note).
         response = self.client.delete(self._delete_url(self.note_a.id))
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
@@ -105,7 +119,7 @@ class AuthenticatedNoteAPITest(APITestCase):
 
     def test_user_cannot_delete_other_users_note(self):
         self.client.force_authenticate(user=self.user_a)
-
+        
         response = self.client.delete(self._delete_url(self.note_b.id))
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
