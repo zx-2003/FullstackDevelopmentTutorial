@@ -49,6 +49,8 @@ function ProtectedRoute({children}) {
     }
 
     useEffect(() => {
+        // auth/refreshToken are recreated each render; only need to run this check once on mount
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         auth()
     }, [])
 
